@@ -1,14 +1,16 @@
 <script lang="ts">
 	import favicon from '#lib/assets/favicon.svg';
-	import logo from '#lib/assets/logo.svg';
+	import Nav from '#lib/components/Nav.svelte';
+	import SvgDefs from '#lib/components/SvgDefs.svelte';
 	import type { LayoutProps } from './$types';
+	import '../app.css';
 
 	let { children }: LayoutProps = $props();
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<link rel="apple-touch-icon" href="/apple-touch-icon.png" /> //	"Add to Home Screen".
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<title>Stellar Team – Modular iGaming Platform</title>
 	<meta
 		name="description"
@@ -16,8 +18,9 @@
 	/>
 </svelte:head>
 
-<header>
-	<img src={logo} alt="Stellar Team" width="88" height="38" />
-</header>
+<SvgDefs />
+<Nav />
 
-{@render children()}
+<main id="main">
+	{@render children()}
+</main>

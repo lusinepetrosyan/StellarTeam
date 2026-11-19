@@ -1,1 +1,5 @@
-<h1>Stellar site is under construction!</h1>
+<script lang="ts">
+	import Hero from '#lib/components/Hero.svelte';
+</script>
+
+<Hero />

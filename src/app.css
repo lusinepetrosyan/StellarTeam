@@ -1,0 +1,261 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/figtree';
+@import '@fontsource-variable/inter';
+
+/*
+ * THEMING — how it works
+ * ----------------------
+ * Dark is the default. Light is used when the OS asks for it, unless the visitor
+ * picked a theme with the toggle (<html data-theme="light|dark">, saved in localStorage).
+ *
+ *   1. Colors   -> @theme below, written once as light-dark(LIGHT, DARK).
+ *   2. Effects  -> shadows / glows / opacities can't use light-dark(), so they live in
+ *                  the two "effects" blocks at the bottom (dark + light).
+ *
+ * Use the tokens as normal Tailwind utilities, no `dark:` needed:
+ *   <section class="bg-bg text-fg">  <div class="bg-card border border-card-line text-ink">
+ * Reach for `dark:` only for one-off changes that are not a token.
+ */
+
+/* ---- Which scheme is active ------------------------------------------------ */
+:root {
+	color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme='dark']) {
+		color-scheme: light;
+	}
+}
+:root[data-theme='light'] {
+	color-scheme: light;
+}
+:root[data-theme='dark'] {
+	color-scheme: dark;
+}
+
+/* `dark:` variant that follows the same rules as above (manual choice, else system). */
+@custom-variant dark {
+	&:where([data-theme='dark'], [data-theme='dark'] *) {
+		@slot;
+	}
+	@media not (prefers-color-scheme: light) {
+		&:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+			@slot;
+		}
+	}
+}
+
+/* ---- Colors: light-dark(LIGHT, DARK) --------------------------------------- */
+@theme {
+	/* Reset Tailwind's default palette so only our tokens exist. */
+	--color-*: initial;
+	--color-white: #fff;
+	--color-black: #000;
+	--color-transparent: transparent;
+	--color-current: currentColor;
+
+	/* Brand (same in both modes) */
+	--color-brand: #e8202a; /* glows, focus rings, big shapes. NOT for buttons (use brand-field) or text (use link) */
+	--color-brand-hi: #ff6b70; /* lighter accent, glow lines */
+	--color-brand-field: #d41a23; /* buttons and full-width red bands; white text on it is 5.3:1 */
+	--color-brand-tint: light-dark(#ffe4e5, #3a1316); /* soft red wash / badge ring */
+	--color-link: light-dark(#c4141d, #ff8a8e); /* red used as text */
+
+	/* Page */
+	--color-bg: light-dark(#f7f6f2, #0b0c11); /* <body> */
+	--color-surface: light-dark(#fffefc, #0f1114); /* large content areas */
+	--color-nav: light-dark(rgb(247 246 242 / 0.78), rgb(11 12 17 / 0.72));
+	--color-line: light-dark(#e3e0d6, #262a37); /* page-level dividers */
+	--color-hero: light-dark(#f7f6f2, #06070b); /* hero sky gradient, top */
+	--color-hero-2: light-dark(#fff0f0, #150d12); /* hero sky gradient, bottom */
+	--color-rim: light-dark(#fff, #ffd0d2); /* star rim light */
+
+	/* Text on the page background */
+	--color-fg: light-dark(#15161c, #f3f4f8);
+	--color-fg-muted: light-dark(#4b4f5e, #c7cad6);
+
+	/* Cards & tiles, and the text on them */
+	--color-card: light-dark(#f5f4f2, #171a1f);
+	--color-card-line: light-dark(#e6e4df, #262b33);
+	--color-tile: light-dark(#fff, #22262d);
+	--color-ink: light-dark(#141a16, #f3f4f6);
+	--color-ink-muted: light-dark(#5b6168, #a3a9b3);
+
+	/* Services block: cards, icon tiles and mock-UI pieces */
+	--color-sv-card: light-dark(#f5f4f2, #22272f);
+	--color-sv-base: light-dark(#fff, #2a303a);
+	--color-sv-tile: light-dark(#fff, #2d333d);
+	--color-sv-tile-2: light-dark(#f5f4f2, #333945);
+	--color-sv-ink: light-dark(#141a16, #f3f4f6);
+	--color-sv-muted: light-dark(#5b6168, #b4b9c4);
+	--color-sv-chip-line: light-dark(#e6e4df, transparent);
+	--color-sv-ui: light-dark(#fffefc, #12151b);
+	--color-sv-ui-2: light-dark(#f5f4f2, #1b1f27);
+	--color-sv-ui-3: light-dark(#e6e4df, #2d333d);
+
+	/* Footer / contact field */
+	--color-field: light-dark(#f0eee8, #07080c);
+	--color-field-fg: light-dark(#141a16, #fff);
+	--color-field-dim: light-dark(rgb(20 26 22 / 0.65), rgb(255 255 255 / 0.55)); /* >= 4.5:1 contrast */
+	--color-field-sep: light-dark(rgb(20 26 22 / 0.3), rgb(255 255 255 / 0.4));
+	--color-ink-field: light-dark(#141a16, #07080c);
+
+	/* Partner-logo wall */
+	--color-logos: light-dark(#f0eee8, #000);
+	--color-logo-tile: light-dark(#fff, #050505);
+	--color-logo-line: light-dark(#dcd9d0, #2a2a2a);
+
+	/* Fonts */
+	--font-head: 'Figtree Variable', 'Helvetica Neue', Arial, sans-serif;
+	--font-body: 'Inter Variable', 'Helvetica Neue', Arial, sans-serif;
+	--font-sans: var(--font-body);
+
+	/* Hero star loop (7s). The five pieces get a staggered delay inline. */
+	--animate-collect: collect 7s infinite;
+	--animate-whole: whole 7s infinite;
+	--animate-flash: flash 7s 0.5s infinite;
+	--animate-rim: rim 7s infinite;
+
+	@keyframes collect {
+		0% {
+			transform: translate(var(--dx), var(--dy));
+			opacity: 0;
+			animation-timing-function: cubic-bezier(0.16, 0.84, 0.26, 1);
+		}
+		20% {
+			transform: translate(0, 0);
+			opacity: 1;
+			animation-timing-function: linear;
+		}
+		66% {
+			transform: translate(0, 0);
+			opacity: 1;
+			animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.4);
+		}
+		84%,
+		100% {
+			transform: translate(var(--dx), var(--dy));
+			opacity: 0;
+		}
+	}
+	@keyframes whole {
+		/* The last piece lands at ~28% of the loop and the first one leaves at ~66%, so the whole star only shows in between. */
+		0%,
+		28% {
+			opacity: 0;
+		}
+		36%,
+		58% {
+			opacity: 1;
+		}
+		64%,
+		100% {
+			opacity: 0;
+		}
+	}
+	@keyframes flash {
+		0%,
+		19% {
+			opacity: 0;
+			transform: scale(0.2);
+		}
+		23% {
+			opacity: 1;
+			transform: scale(1);
+		}
+		34%,
+		100% {
+			opacity: 0;
+			transform: scale(3);
+		}
+	}
+	@keyframes rim {
+		0%,
+		28% {
+			opacity: 0;
+		}
+		34% {
+			opacity: 1;
+		}
+		56% {
+			opacity: 0.55;
+		}
+		64%,
+		100% {
+			opacity: 0;
+		}
+	}
+}
+
+/* ---- Effects: expose as utilities ------------------------------------------ */
+@theme inline {
+	--shadow-sv: var(--sv-shadow);
+	--shadow-sv-2: var(--sv-shadow-2);
+	--shadow-logo-tile: var(--logo-tile-shadow);
+	--background-image-sv-shot: var(--sv-shot);
+}
+@utility star-glow {
+	filter: var(--star-glow);
+}
+@utility logo-mono {
+	filter: var(--logo-filter); /* turns logo PNGs white (dark) or black (light) */
+}
+/* Opacity effects are used with arbitrary values, e.g. `opacity-(--horizon-op)`. */
+
+/* ---- Effects: dark (default) ------------------------------------------------ */
+:root {
+	--star-glow: drop-shadow(0 0 22px rgb(232 32 42 / 0.55)) drop-shadow(0 0 70px rgb(232 32 42 / 0.28));
+	--horizon-op: 0.75;
+	--haze-op: 0.45;
+	--refl-op: 0.85;
+	--sv-shadow:
+		0 1px 0 rgb(255 255 255 / 0.06) inset, 0 16px 40px rgb(0 0 0 / 0.35);
+	--sv-shadow-2:
+		0 1px 0 rgb(255 255 255 / 0.1) inset, 0 28px 70px rgb(0 0 0 / 0.45);
+	--sv-shot: linear-gradient(135deg, #3a1316, #2a303a);
+	--logo-tile-shadow:
+		inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 0 0 1px rgb(255 255 255 / 0.03);
+	--logo-filter: brightness(0) invert(1);
+}
+
+/* ---- Effects: light --------------------------------------------------------- */
+@media (prefers-color-scheme: light) {
+	:root:not([data-theme='dark']) {
+		--star-glow: drop-shadow(0 10px 18px rgb(232 32 42 / 0.25));
+		--horizon-op: 0.35;
+		--haze-op: 0.14;
+		--refl-op: 0.5;
+		--sv-shadow: none;
+		--sv-shadow-2: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px rgb(0 0 0 / 0.06);
+		--sv-shot: linear-gradient(135deg, #ffe4e5, #f5f4f2);
+		--logo-tile-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 6px 16px rgb(0 0 0 / 0.05);
+		--logo-filter: brightness(0);
+	}
+}
+:root[data-theme='light'] {
+	--star-glow: drop-shadow(0 10px 18px rgb(232 32 42 / 0.25));
+	--horizon-op: 0.35;
+	--haze-op: 0.14;
+	--refl-op: 0.5;
+	--sv-shadow: none;
+	--sv-shadow-2: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px rgb(0 0 0 / 0.06);
+	--sv-shot: linear-gradient(135deg, #ffe4e5, #f5f4f2);
+	--logo-tile-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 6px 16px rgb(0 0 0 / 0.05);
+	--logo-filter: brightness(0);
+}
+
+/* ---- Base ------------------------------------------------------------------- */
+@layer base {
+	html {
+		scroll-padding-top: 4.5rem; /* keep anchors clear of the fixed nav */
+	}
+	:focus-visible {
+		outline: 2px solid var(--color-brand);
+		outline-offset: 3px;
+	}
+	body {
+		background-color: var(--color-bg);
+		color: var(--color-fg);
+		font-family: var(--font-body);
+	}
+}
