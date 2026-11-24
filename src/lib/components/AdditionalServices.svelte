@@ -5,24 +5,11 @@
 	const t = $derived(TONES[tone]);
 
 	import { onMount } from 'svelte';
+	import { useI18n } from '../i18n';
 
-	const SLIDES = [
-		{
-			name: 'Casino Engine',
-			title: 'Power your casino with a fully controlled engine.',
-			text: 'Run casino content on an engine you own and configure: game control, winners, and limits handled inside your platform rather than behind a provider’s wall.'
-		},
-		{
-			name: 'CRM and Bonuses',
-			title: 'Drive engagement with intelligent player management.',
-			text: 'Messaging, notifications, bonuses and CRM in one place, so your team can shape the player journey without waiting on anyone else.'
-		},
-		{
-			name: 'Third Party Tools',
-			title: 'Integrate freely with the tools you trust.',
-			text: 'Payments, KYC, communication and analytics tools connect through open integrations. Your stack, your choices, no lock-in.'
-		}
-	];
+	const i18n = useI18n();
+	const t18 = $derived(i18n.t.extra);
+	const SLIDES = $derived(t18.slides);
 
 	let current = $state(0);
 	let paused = $state(false);
@@ -246,9 +233,9 @@
 >
 	<!-- Heading -->
 	<div class="grid w-full max-w-[1180px] justify-items-center gap-[calc(var(--u)*1.6)] justify-self-center pb-[var(--u)] text-center max-[720px]:gap-[3cqw]">
-		<p class="m-0 font-head text-[length:calc(var(--u)*5.2)] leading-none font-extrabold tracking-[-0.01em] {t.kicker} max-[720px]:text-[length:max(30px,9cqw)]">Additional Services</p>
+		<p class="m-0 font-head text-[length:calc(var(--u)*5.2)] leading-none font-extrabold tracking-[-0.01em] {t.kicker} max-[720px]:text-[length:max(30px,9cqw)]">{t18.kicker}</p>
 		<h2 class="m-0 -mt-[calc(var(--u)*0.6)] max-w-[22ch] font-head text-[length:calc(var(--u)*4)] leading-[1.05] font-bold tracking-[-0.01em] text-balance max-[720px]:-mt-[1cqw] max-[720px]:text-[length:max(26px,7cqw)]">
-			Add what you need, when you need it.
+			{t18.title}
 		</h2>
 	</div>
 
@@ -257,7 +244,7 @@
 		class="relative grid w-full max-w-[1180px] justify-self-center gap-[calc(var(--u)*1.6)] max-[720px]:gap-[3cqw]"
 		role="region"
 		aria-roledescription="carousel"
-		aria-label="Additional services"
+		aria-label={t18.region}
 		onpointerenter={() => (paused = true)}
 		onpointerleave={() => (paused = false)}
 		onfocusin={() => (paused = true)}
@@ -267,7 +254,7 @@
 	>
 		<button
 			type="button"
-			aria-label="Previous service"
+			aria-label={t18.prev}
 			onclick={() => go(current - 1)}
 			class="absolute top-1/2 left-[calc(var(--u)*-1.6)] z-[2] grid size-[max(calc(var(--u)*3.2),44px)] -translate-y-1/2 cursor-pointer place-items-center rounded-full border-0 bg-sv-tile text-sv-ink shadow-sv-2 hover:text-brand max-[720px]:hidden"
 		>
@@ -281,7 +268,7 @@
 						class="grid min-w-0 flex-[0_0_100%] grid-cols-2 items-center gap-[calc(var(--u)*2)] rounded-[calc(var(--u)*2.4)] bg-sv-card p-[calc(var(--u)*2)] text-sv-ink shadow-sv max-[720px]:grid-cols-1 max-[720px]:gap-[3cqw] max-[720px]:rounded-[5cqw] max-[720px]:p-[2.5cqw]"
 						role="group"
 						aria-roledescription="slide"
-						aria-label="{i + 1} of {SLIDES.length}: {s.name}"
+						aria-label={t18.slide(i + 1, SLIDES.length, s.name)}
 						inert={i !== current}
 					>
 						<div class="grid gap-[calc(var(--u)*1.6)] px-[calc(var(--u)*3)] py-[calc(var(--u)*2.6)] max-[720px]:gap-[3.5cqw] max-[720px]:px-[3cqw] max-[720px]:pt-[2cqw] max-[720px]:pb-[3cqw]">
@@ -293,7 +280,7 @@
 								rel="noopener"
 								class="inline-flex min-h-11 w-max items-center gap-[calc(var(--u)*0.6)] rounded-full bg-brand-field px-[calc(var(--u)*1.9)] py-[var(--u)] text-[length:max(15px,calc(var(--u)*1.25))] font-semibold whitespace-nowrap text-white no-underline max-[720px]:gap-2 max-[720px]:px-[4cqw] max-[720px]:py-[2.4cqw] max-[720px]:text-[length:max(15px,3.4cqw)]"
 							>
-								Explore {s.name}
+								{s.cta}
 								<svg class="size-4" aria-hidden="true"><use href="#i-arrow" /></svg>
 							</a>
 						</div>
@@ -313,7 +300,7 @@
 
 		<button
 			type="button"
-			aria-label="Next service"
+			aria-label={t18.next}
 			onclick={() => go(current + 1)}
 			class="absolute top-1/2 right-[calc(var(--u)*-1.6)] z-[2] grid size-[max(calc(var(--u)*3.2),44px)] -translate-y-1/2 cursor-pointer place-items-center rounded-full border-0 bg-sv-tile text-sv-ink shadow-sv-2 hover:text-brand max-[720px]:hidden"
 		>
@@ -321,7 +308,7 @@
 		</button>
 
 		<!-- Dots -->
-		<div class="flex justify-center gap-[calc(var(--u)*0.6)] max-[720px]:gap-[1cqw]" role="tablist" aria-label="Choose a service">
+		<div class="flex justify-center gap-[calc(var(--u)*0.6)] max-[720px]:gap-[1cqw]" role="tablist" aria-label={t18.choose}>
 			{#each SLIDES as s, i (s.name)}
 				<button type="button" role="tab" aria-label={s.name} aria-selected={i === current} onclick={() => go(i)} class="cursor-pointer border-0 bg-transparent p-[12px]">
 					<span

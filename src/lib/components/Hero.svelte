@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { useI18n } from '../i18n';
+
+	const i18n = useI18n();
+	const t = $derived(i18n.t.hero);
 
 	// Where the star sits in the 960x540 art box (from the exported hero). Its base is on the horizon line, y = 357.
 	const STAR = { x: 440, y: 48, s: 1.05 };
@@ -11,7 +15,6 @@
 		['w4', -188, 259],
 		['w5', -304, -99]
 	] as const;
-	const AREAS = ['Platform Core', 'Wallet & Payments', 'Engagement', 'Betting & Gaming', 'Compliance', 'Interfaces'];
 	const NS = 'http://www.w3.org/2000/svg';
 
 	let disc: SVGGElement;
@@ -158,7 +161,7 @@
 				viewBox="0 0 960 540"
 				preserveAspectRatio="xMidYMid slice"
 				role="img"
-				aria-label="Stellar star assembling from five pieces on the horizon"
+				aria-label={t.starLabel}
 				class="absolute inset-0 size-full overflow-visible stack:inset-auto stack:top-[calc(var(--hzs)_-_357*var(--k))] stack:left-[calc(var(--px)_+_2.5cqw_-_475.7*var(--k))] stack:h-[calc(540*var(--k))] stack:w-[calc(960*var(--k))]"
 			>
 				<g transform="translate({STAR.x} {STAR.y}) scale({STAR.s})" class="[transform:translate(440px,17.4px)_scale(1.05)] stack:[transform:translate(440px,48px)_scale(1.05)]">
@@ -209,10 +212,10 @@
 		<h1
 			class="m-0 short:max-w-[calc(var(--u)*46)] font-head text-[length:calc(var(--u)*4.8)] leading-[1.02] font-bold tracking-[-0.015em] [text-shadow:0_0_20px_var(--color-hero),0_0_6px_var(--color-hero)] text-balance stack:text-[length:min(max(calc(var(--s)*9.3),min(9cqw,2.4rem)),8.9cqw)]"
 		>
-			<span class="stack:block">Understand Your</span> <span class="stack:block">Platform. Then</span> <span class="stack:block">Decide How to Run It.</span>
+			{#each t.headline as line, k (k)}{#if k}{' '}{/if}<span class="stack:block">{line}</span>{/each}
 		</h1>
 		<p class="mt-[calc(var(--u)*2.6)] max-w-[40ch] text-[length:max(18px,calc(var(--u)*1.85))] leading-normal text-fg-muted [text-shadow:0_0_20px_var(--color-hero),0_0_6px_var(--color-hero)] short:max-w-none short:text-[length:16px] stack:mt-0 stack:max-w-none stack:text-fg stack:text-[length:min(max(17px,calc(var(--s)*5.1)),24px)]">
-			Full source code ownership. Modular architecture. Operate independently or with expert support.
+			{t.sub}
 		</p>
 		<div class="flex flex-wrap gap-[calc(var(--u)*1)] stack:mt-[calc(var(--s)*5)] stack:flex-nowrap stack:gap-[calc(var(--s)*2)]">
 			<a
@@ -221,7 +224,7 @@
 				rel="noopener"
 				class="inline-flex min-h-11 items-center gap-[calc(var(--u)*0.6)] rounded-full bg-brand-field px-[calc(var(--u)*1.9)] py-[calc(var(--u)*1)] font-body text-[length:max(15px,calc(var(--u)*1.25))] font-semibold whitespace-nowrap text-white no-underline stack:grow stack:justify-center stack:gap-2 stack:px-[max(8px,calc(var(--s)*2.6))] stack:py-[calc(var(--s)*2.4)] stack:min-w-0 stack:text-[length:clamp(11px,3.8cqw,16px)]"
 			>
-				Explore our services
+				{t.primary}
 				<svg class="size-4 stack:hidden" aria-hidden="true"><use href="#i-arrow" /></svg>
 			</a>
 			<a
@@ -230,7 +233,7 @@
 				rel="noopener"
 				class="inline-flex min-h-11 items-center rounded-full border border-line bg-tile px-[calc(var(--u)*1.9)] py-[calc(var(--u)*1)] font-body text-[length:max(15px,calc(var(--u)*1.25))] font-semibold whitespace-nowrap text-ink no-underline stack:grow stack:justify-center stack:px-[max(8px,calc(var(--s)*2.6))] stack:py-[calc(var(--s)*2.4)] stack:min-w-0 stack:text-[length:clamp(11px,3.8cqw,16px)]"
 			>
-				Book a consultation
+				{t.secondary}
 			</a>
 		</div>
 	</div>
@@ -239,8 +242,8 @@
 	<div
 		class="absolute inset-x-[4cqw] bottom-[calc(var(--u)*2.6)] z-[3] flex justify-between font-head text-[length:max(13px,calc(var(--u)*1.05))] font-semibold text-fg-muted short:hidden stack:@container stack:relative stack:inset-auto stack:ml-(--px) stack:mt-auto stack:w-[calc(100cqw_-_var(--px)*2)] stack:pt-[calc(var(--s)*4)] stack:pb-[calc(var(--s)*3)] stack:grid stack:grid-cols-3 stack:gap-[6px] stack:max-[340px]:grid-cols-2"
 	>
-		<p class="m-0 hidden w-full text-center text-[length:max(11px,min(3.4cqw,14px))] font-bold tracking-[0.12em] uppercase stack:col-span-3 stack:mb-1 stack:block">Platform areas</p>
-		{#each AREAS as area (area)}
+		<p class="m-0 hidden w-full text-center text-[length:max(11px,min(3.4cqw,14px))] font-bold tracking-[0.12em] uppercase stack:col-span-3 stack:mb-1 stack:block">{t.areasTitle}</p>
+		{#each t.areas as area (area)}
 			<span class="stack:flex stack:min-h-[calc(var(--s)*10)] stack:items-center stack:justify-center stack:rounded-xl stack:border stack:border-line stack:px-1 stack:py-1.5 stack:text-center stack:leading-tight stack:whitespace-nowrap stack:text-[length:max(11px,min(3.3cqw,15px))]">{area}</span>
 		{/each}
 	</div>

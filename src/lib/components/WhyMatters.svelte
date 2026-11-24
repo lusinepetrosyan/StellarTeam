@@ -1,13 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	import { useI18n } from '../i18n';
+
+	const i18n = useI18n();
+	const t = $derived(i18n.t.why);
+
 	// Four cards, fanned out like a hand of playing cards. tx = how far from the middle, rot = tilt in degrees.
-	const CARDS = [
-		{ title: 'Full Control', text: 'You define how the system works.', icon: 'i-key', tx: -29, rot: -12, look: 'bg-brand-field text-white' },
-		{ title: 'No Dependency', text: 'You are not locked into a provider.', icon: 'i-plug', tx: -9.7, rot: -4, look: 'bg-tile text-ink border border-card-line' },
-		{ title: 'Modular Growth', text: 'Components evolve independently.', icon: 'i-chip', tx: 9.7, rot: 4, look: 'bg-card text-ink' },
-		{ title: 'Performance', text: 'Handles real-time load and traffic spikes.', icon: 'i-chart', tx: 29, rot: 12, look: 'bg-brand-tint text-ink' }
+	const LOOKS = [
+		{ icon: 'i-key', tx: -29, rot: -12, look: 'bg-brand-field text-white' },
+		{ icon: 'i-plug', tx: -9.7, rot: -4, look: 'bg-tile text-ink border border-card-line' },
+		{ icon: 'i-chip', tx: 9.7, rot: 4, look: 'bg-card text-ink' },
+		{ icon: 'i-chart', tx: 29, rot: 12, look: 'bg-brand-tint text-ink' }
 	];
+	const CARDS = $derived(t.cards.map((c, k) => ({ ...c, ...LOOKS[k] })));
 
 	// The cards are dealt out when the section scrolls into view (and again if it is scrolled away and back)
 	let section: HTMLElement;
@@ -33,9 +39,9 @@
 	<div
 		class="grid justify-items-center gap-[calc(var(--u)*1.6)] pt-[calc(var(--u)*6)] pr-[max(calc(var(--u)*5),env(safe-area-inset-right))] pb-[var(--u)] pl-[max(calc(var(--u)*5),env(safe-area-inset-left))] text-center max-[720px]:gap-[3cqw] max-[720px]:pt-[12cqw] max-[720px]:pb-[4cqw]"
 	>
-		<p class="m-0 font-head text-[length:calc(var(--u)*5.2)] leading-none font-extrabold tracking-[-0.01em] text-brand max-[720px]:text-[length:max(30px,9cqw)]">Why This Structure Matters</p>
+		<p class="m-0 font-head text-[length:calc(var(--u)*5.2)] leading-none font-extrabold tracking-[-0.01em] text-brand max-[720px]:text-[length:max(30px,9cqw)]">{t.kicker}</p>
 		<h2 class="m-0 max-w-[30ch] font-head text-[length:max(22px,calc(var(--u)*3))] leading-[1.1] font-bold tracking-[-0.01em] text-balance max-[720px]:max-w-none max-[720px]:text-[length:max(22px,5.4cqw)]">
-			A platform is not defined by its features, but by how well it can be understood, controlled, and adapted.
+			{t.title}
 		</h2>
 	</div>
 

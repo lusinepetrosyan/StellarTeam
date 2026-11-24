@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { TONES, type Tone } from '../tone';
+	import { useI18n } from '../i18n';
 
 	let { tone = 'auto' }: { tone?: Tone } = $props();
 	const t = $derived(TONES[tone]);
 
-	// The six service groups. `inc` = what each group includes (also drawn around the hub in the diagram).
-	const GROUPS = [
-		{ name: 'Platform Core', text: 'Authentication, configuration, localisation, and system logic.', inc: ['Authentication', 'Configuration', 'Localisation', 'System logic'], icon: 'i-core' },
-		{ name: 'Wallet, Payments, and Transactions', text: 'Balance logic, cashier operations, and payment processing.', inc: ['Accounting', 'Cashier', 'Payment Integrations', 'Payment GC'], icon: 'i-wallet' },
-		{ name: 'Engagement, Retention, and Communication', text: 'Player communication, CRM, and retention tools.', inc: ['Messaging', 'Notifications', 'Bonus', 'CRM', 'Telegram', 'Intercom'], icon: 'i-chat' },
-		{ name: 'Betting and Gaming Operations', text: 'Sportsbook and casino logic.', inc: ['Tickets', 'Sports Bets', 'Casino Control', 'Winners'], icon: 'i-igame' },
-		{ name: 'Compliance, Reporting, and Oversight', text: 'Verification, reporting, and operational monitoring.', inc: ['Reporting', 'Report Calculator', 'KYC (Sumsub)'], icon: 'i-shield' },
-		{ name: 'Interfaces and Experience Layer', text: 'The visible and operational interfaces.', inc: ['Website', 'Admin Panel'], icon: 'i-screen' }
-	];
+	const i18n = useI18n();
+	const t18 = $derived(i18n.t.services);
+
+	// The six service groups. `inc` = what each group includes (also drawn around the hub in the diagram). The words come from the language files; the icons stay here.
+	const ICONS = ['i-core', 'i-wallet', 'i-chat', 'i-igame', 'i-shield', 'i-screen'];
+	const GROUPS = $derived(t18.groups.map((g, k) => ({ ...g, icon: ICONS[k] })));
 
 	// One group per slide; `current` is the slide on show (arrows, dots and swiping change it).
 	let current = $state(0);
@@ -47,7 +45,7 @@
 </script>
 
 <!-- The diagram for one group: its items around a hub, joined by dashed lines that flow. phone = the bigger version drawn for phone cards. -->
-{#snippet diagram(g: (typeof GROUPS)[number], star: boolean, phone: boolean)}
+{#snippet diagram(g: { name: string; text: string; inc: string[]; icon: string }, star: boolean, phone: boolean)}
 		{#if star}
 			<circle cx="200" cy="150" r={phone ? 92 : 78} class="animate-breathe fill-brand opacity-[0.14] [transform-origin:200px_150px] motion-reduce:animate-none" />
 		{:else}
@@ -79,12 +77,12 @@
 >
 	<!-- Heading -->
 	<div class="grid w-full max-w-[1180px] justify-items-center gap-[calc(var(--u)*1.6)] justify-self-center pb-[var(--u)] text-center max-[720px]:gap-[3cqw]">
-		<p class="m-0 font-head text-[length:calc(var(--u)*5.2)] leading-none font-extrabold tracking-[-0.01em] {t.kicker} max-[720px]:text-[length:max(30px,9cqw)]">Service Groups</p>
+		<p class="m-0 font-head text-[length:calc(var(--u)*5.2)] leading-none font-extrabold tracking-[-0.01em] {t.kicker} max-[720px]:text-[length:max(30px,9cqw)]">{t18.kicker}</p>
 		<h2 class="m-0 -mt-[calc(var(--u)*0.6)] max-w-[22ch] font-head text-[length:calc(var(--u)*4)] leading-[1.05] font-bold tracking-[-0.01em] text-balance max-[720px]:-mt-[1cqw] max-[720px]:text-[length:max(26px,7cqw)]">
-			Explore the system by functional area.
+			{t18.title}
 		</h2>
 		<p class="max-w-[52ch] text-[length:max(15px,calc(var(--u)*1.5))] leading-normal {t.sub} max-[720px]:text-[length:max(15px,3.2cqw)]">
-			Each area represents a group of services that define how your platform operates.
+			{t18.sub}
 		</p>
 	</div>
 
@@ -96,7 +94,7 @@
 				<div class="grid gap-[calc(var(--u)*1.4)] {i % 2 ? 'order-2' : ''}">
 					<h3 class="m-0 font-head text-[length:max(22px,calc(var(--u)*3.2))] leading-[1.03] font-extrabold tracking-[-0.015em]">{g.name}</h3>
 					<p class="m-0 max-w-[36ch] text-[length:max(15px,calc(var(--u)*1.6))] leading-normal text-sv-muted">{g.text}</p>
-					<span class="text-[length:max(11px,calc(var(--u)*1.05))] font-bold tracking-[0.14em] text-sv-muted uppercase">Includes</span>
+					<span class="text-[length:max(11px,calc(var(--u)*1.05))] font-bold tracking-[0.14em] text-sv-muted uppercase">{t18.includes}</span>
 					<div class="flex flex-wrap gap-[calc(var(--u)*0.6)]">
 						{#each g.inc as item (item)}
 							<span class="rounded-[7px] border border-sv-chip-line bg-sv-tile px-[calc(var(--u)*1)] py-[calc(var(--u)*0.55)] text-[length:max(13px,calc(var(--u)*1.25))] font-medium text-sv-ink">{item}</span>
@@ -108,7 +106,7 @@
 						rel="noopener"
 						class="mt-[calc(var(--u)*0.3)] inline-flex min-h-11 w-max items-center gap-[calc(var(--u)*0.6)] rounded-full bg-brand-field px-[calc(var(--u)*1.9)] py-[var(--u)] text-[length:max(15px,calc(var(--u)*1.25))] font-semibold whitespace-nowrap text-white no-underline"
 					>
-						Explore model
+						{t18.cta}
 						<svg class="size-4" aria-hidden="true"><use href="#i-arrow" /></svg>
 					</a>
 				</div>
@@ -128,7 +126,7 @@
 		class="relative grid w-full justify-self-center gap-[3cqw] min-[721px]:hidden"
 		role="region"
 		aria-roledescription="carousel"
-		aria-label="Service groups"
+		aria-label={t18.region}
 		onpointerdown={onPointerDown}
 		onpointerup={onPointerUp}
 	>
@@ -140,13 +138,13 @@
 						class="grid min-w-0 flex-[0_0_100%] grid-cols-2 items-center gap-[calc(var(--u)*2)] rounded-[calc(var(--u)*2.4)] bg-sv-card p-[calc(var(--u)*2)] text-sv-ink shadow-sv max-[720px]:grid-cols-1 max-[720px]:content-start max-[720px]:gap-[3cqw] max-[720px]:rounded-[5cqw] max-[720px]:p-[2.5cqw]"
 						role="group"
 						aria-roledescription="slide"
-						aria-label="{i + 1} of {GROUPS.length}: {g.name}"
+						aria-label={t18.slide(i + 1, GROUPS.length, g.name)}
 						inert={i !== current}
 					>
 						<div class="grid gap-[calc(var(--u)*1.4)] px-[calc(var(--u)*3)] py-[calc(var(--u)*2.6)] max-[720px]:gap-[3cqw] max-[720px]:px-[2.5cqw] max-[720px]:pt-[2cqw] max-[720px]:pb-[3cqw]">
 							<h3 class="m-0 font-head text-[length:max(24px,calc(var(--u)*3))] leading-[1.05] font-extrabold tracking-[-0.015em] text-balance max-[720px]:text-[length:max(28px,7.2cqw)]">{g.name}</h3>
 							<p class="m-0 max-w-[46ch] text-[length:max(16px,calc(var(--u)*1.4))] leading-normal text-sv-muted max-[720px]:max-w-none max-[720px]:text-[length:max(16px,4cqw)]">{g.text}</p>
-							<span class="text-[length:max(11px,calc(var(--u)*1.05))] font-bold tracking-[0.14em] text-sv-muted uppercase max-[720px]:text-[length:max(11px,2.6cqw)]">Includes</span>
+							<span class="text-[length:max(11px,calc(var(--u)*1.05))] font-bold tracking-[0.14em] text-sv-muted uppercase max-[720px]:text-[length:max(11px,2.6cqw)]">{t18.includes}</span>
 							<div class="flex flex-wrap gap-[calc(var(--u)*0.6)] max-[720px]:gap-[1.6cqw]">
 								{#each g.inc as item (item)}
 									<span
@@ -160,7 +158,7 @@
 								rel="noopener"
 								class="mt-[calc(var(--u)*0.3)] inline-flex min-h-11 w-max items-center gap-[calc(var(--u)*0.6)] rounded-full bg-brand-field px-[calc(var(--u)*1.9)] py-[var(--u)] text-[length:max(15px,calc(var(--u)*1.25))] font-semibold whitespace-nowrap text-white no-underline max-[720px]:gap-2 max-[720px]:px-[4cqw] max-[720px]:py-[2.4cqw] max-[720px]:text-[length:max(15px,3.4cqw)]"
 							>
-								Explore model
+								{t18.cta}
 								<svg class="size-4" aria-hidden="true"><use href="#i-arrow" /></svg>
 							</a>
 						</div>
@@ -177,7 +175,7 @@
 		</div>
 
 		<!-- Dots -->
-		<div class="flex justify-center gap-[calc(var(--u)*0.6)] max-[720px]:gap-[1cqw]" role="tablist" aria-label="Choose a service group">
+		<div class="flex justify-center gap-[calc(var(--u)*0.6)] max-[720px]:gap-[1cqw]" role="tablist" aria-label={t18.choose}>
 			{#each GROUPS as g, i (g.name)}
 				<button type="button" role="tab" aria-label={g.name} aria-selected={i === current} onclick={() => go(i)} class="cursor-pointer border-0 bg-transparent p-[12px]">
 					<span

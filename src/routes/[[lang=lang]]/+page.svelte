@@ -8,7 +8,7 @@
 	import TechStack from '#lib/components/TechStack.svelte';
 	import Services from '#lib/components/Services.svelte';
 	import WhyMatters from '#lib/components/WhyMatters.svelte';
-	import type { Tone } from '../lib/tone';
+	import type { Tone } from '../../lib/tone';
 
 	// TEST ONLY: ?tone=dark | light | red changes the background of Service Groups and Additional Services.
 	let tone = $state<Tone>('auto');
