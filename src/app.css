@@ -45,6 +45,12 @@
 	}
 }
 
+/* Layout switches for the hero:
+ *   stack: portrait or square screens (phones, tablets held upright): star on top, text under it, everything fitted to the height.
+ *   short: wide but very short screens (phones held sideways): the bottom strip is dropped to make room. */
+@custom-variant stack (@media (max-aspect-ratio: 1/1));
+@custom-variant short (@media (max-height: 520px) and (min-aspect-ratio: 1/1));
+
 /* ---- Colors: light-dark(LIGHT, DARK) --------------------------------------- */
 @theme {
 	/* Reset Tailwind's default palette so only our tokens exist. */
@@ -110,79 +116,191 @@
 	--font-body: 'Inter Variable', 'Helvetica Neue', Arial, sans-serif;
 	--font-sans: var(--font-body);
 
-	/* Hero star loop (7s). The five pieces get a staggered delay inline. */
-	--animate-collect: collect 7s infinite;
-	--animate-whole: whole 7s infinite;
-	--animate-flash: flash 7s 0.5s infinite;
-	--animate-rim: rim 7s infinite;
+	/* Hero star: plays ONCE on page load. The five pieces fly in (staggered delay set inline), flash as they meet, then the
+	   finished star (solid + network + gloss) fades in and stays. The network keeps moving by itself (see Hero.svelte). */
+	--animate-collect: assemble 1.4s both;
+	--animate-flash: flash 1.3s 1.5s both;
+	--animate-whole: appear 0.9s 1.9s both;
+	--animate-rim: rim 1.4s 1.9s both;
+	/* Service diagrams: dashed lines that flow, and a halo that breathes */
+	--animate-flow: flow 1.2s linear infinite;
+	--animate-breathe: breathe 3.4s ease-in-out infinite;
+	/* Additional-services illustrations */
+	--animate-hub: hub-breathe 3.2s ease-in-out infinite;
+	--animate-halo: halo 3.2s ease-in-out infinite;
+	--animate-wheel: ringspin 14s linear infinite;
+	--animate-float: float 4s ease-in-out infinite alternate;
+	--animate-tog: tog 4s steps(1, end) infinite;
+	/* How You Operate (text fades in) and Why This Matters (payline draws, reels land, dots pop, columns rise) */
+	--animate-fade: fade 0.4s ease;
+	--animate-draw: draw 2.8s cubic-bezier(0.3, 0, 0.2, 1) forwards;
+	--animate-land: land 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+	--animate-stop: stop 0.5s ease forwards;
+	--animate-up: up 0.5s ease forwards;
+	/* Tech Stack logo rows slide sideways forever (the second row the other way) */
+	--animate-slide: slide 60s linear infinite;
+	/* Why This Structure Matters: the four cards are dealt out when the section comes into view */
+	--animate-deal: deal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+	--animate-slide-rev: slide 72s linear infinite reverse;
 
-	@keyframes collect {
-		0% {
+	@keyframes assemble {
+		from {
 			transform: translate(var(--dx), var(--dy));
 			opacity: 0;
 			animation-timing-function: cubic-bezier(0.16, 0.84, 0.26, 1);
 		}
-		20% {
+		to {
 			transform: translate(0, 0);
 			opacity: 1;
-			animation-timing-function: linear;
-		}
-		66% {
-			transform: translate(0, 0);
-			opacity: 1;
-			animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.4);
-		}
-		84%,
-		100% {
-			transform: translate(var(--dx), var(--dy));
-			opacity: 0;
 		}
 	}
-	@keyframes whole {
-		/* The last piece lands at ~28% of the loop and the first one leaves at ~66%, so the whole star only shows in between. */
-		0%,
-		28% {
+	@keyframes appear {
+		from {
 			opacity: 0;
 		}
-		36%,
-		58% {
+		to {
 			opacity: 1;
-		}
-		64%,
-		100% {
-			opacity: 0;
 		}
 	}
 	@keyframes flash {
-		0%,
-		19% {
+		0% {
 			opacity: 0;
 			transform: scale(0.2);
 		}
-		23% {
+		25% {
 			opacity: 1;
 			transform: scale(1);
 		}
-		34%,
 		100% {
 			opacity: 0;
 			transform: scale(3);
 		}
 	}
-	@keyframes rim {
+	@keyframes flow {
+		to {
+			stroke-dashoffset: -12;
+		}
+	}
+	@keyframes breathe {
+		50% {
+			transform: scale(1.08);
+			opacity: 0.22;
+		}
+	}
+	@keyframes hub-breathe {
 		0%,
-		28% {
+		100% {
+			filter: drop-shadow(0 0 0 rgb(232 32 42 / 0));
+			transform: scale(1);
+		}
+		50% {
+			filter: drop-shadow(0 0 16px rgb(232 32 42 / 0.55));
+			transform: scale(1.03);
+		}
+	}
+	@keyframes halo {
+		0%,
+		100% {
+			transform: scale(1);
+			opacity: 0.08;
+		}
+		50% {
+			transform: scale(1.08);
+			opacity: 0.16;
+		}
+	}
+	@keyframes ringspin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	@keyframes float {
+		from {
+			transform: translateY(0);
+		}
+		to {
+			transform: translateY(-5px);
+		}
+	}
+	@keyframes tog {
+		0%,
+		45% {
+			transform: translateX(0);
+		}
+		50%,
+		95% {
+			transform: translateX(-10px);
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+	@keyframes deal {
+		from {
+			opacity: 0;
+			transform: translateX(0) rotate(0) translateY(3cqw);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(var(--tx)) rotate(var(--rot));
+		}
+	}
+	@keyframes slide {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+	@keyframes fade {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	@keyframes draw {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+	@keyframes land {
+		from {
+			transform: translateY(0);
+		}
+		to {
+			transform: translateY(-320px);
+		}
+	}
+	@keyframes stop {
+		0% {
+			opacity: 0;
+			transform: scale(0.3);
+		}
+		70% {
+			transform: scale(1.15);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+	@keyframes up {
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	@keyframes rim {
+		0% {
 			opacity: 0;
 		}
-		34% {
+		40% {
 			opacity: 1;
 		}
-		56% {
-			opacity: 0.55;
-		}
-		64%,
 		100% {
-			opacity: 0;
+			opacity: 0.55;
 		}
 	}
 }
@@ -248,6 +366,9 @@
 @layer base {
 	html {
 		scroll-padding-top: 4.5rem; /* keep anchors clear of the fixed nav */
+		@media (prefers-reduced-motion: no-preference) {
+			scroll-behavior: smooth;
+		}
 	}
 	:focus-visible {
 		outline: 2px solid var(--color-brand);

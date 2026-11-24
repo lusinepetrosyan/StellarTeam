@@ -1,5 +1,6 @@
 <script lang="ts">
 	import favicon from '#lib/assets/favicon.svg';
+	import Footer from '#lib/components/Footer.svelte';
 	import Nav from '#lib/components/Nav.svelte';
 	import SvgDefs from '#lib/components/SvgDefs.svelte';
 	import type { LayoutProps } from './$types';
@@ -24,3 +25,5 @@
 <main id="main">
 	{@render children()}
 </main>
+
+<Footer />
