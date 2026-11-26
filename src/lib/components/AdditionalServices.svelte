@@ -163,24 +163,16 @@
 		<!-- CRM and Bonuses: a red square with people, tiles wired in with switches -->
 		{#if m}
 			{@render wire('M65 54 L150 54 Q166 54 166 70 L166 100', 3.4, 0, true)}
-			{@render toggle(108, 54, 0)}
 			{@render wire('M335 54 L250 54 Q234 54 234 70 L234 100', 3.4, 0.8, true)}
-			{@render toggle(292, 54, 1.3)}
 			{@render wire('M65 246 L150 246 Q166 246 166 230 L166 200', 3.4, 1.6, true)}
-			{@render toggle(108, 246, 2.4)}
 			{@render wire('M335 246 L250 246 Q234 246 234 230 L234 200', 3.4, 2.4, true)}
-			{@render toggle(292, 246, 3.2)}
 			{@render wire('M74 150 L150 150', 2.8, 0.6, true)}
 			{@render wire('M326 150 L250 150', 2.8, 1.8, true)}
 		{:else}
 			{@render wire('M110 86 L150 86 Q160 86 160 96 L160 100', 2, 0)}
-			{@render toggle(135, 86, 0)}
 			{@render wire('M290 86 L250 86 Q240 86 240 96 L240 100', 2, 0.5)}
-			{@render toggle(265, 86, -1.3)}
 			{@render wire('M110 214 L150 214 Q160 214 160 204 L160 200', 2, 1)}
-			{@render toggle(135, 214, -2.4)}
 			{@render wire('M290 214 L250 214 Q240 214 240 204 L240 200', 2, 1.5)}
-			{@render toggle(265, 214, -3.2)}
 			{@render wire('M118 150 L150 150', 1.6, 0.3)}
 			{@render wire('M282 150 L250 150', 1.6, 0.9)}
 		{/if}
@@ -219,12 +211,6 @@
 			{/if}
 		{/each}
 	{/if}
-{/snippet}
-
-<!-- A small on/off switch whose knob slides back and forth -->
-{#snippet toggle(x: number, y: number, delay: number)}
-	<rect x={x - 13} y={y - 7} width="26" height="14" rx="7" class="fill-sv-base stroke-brand stroke-[1.4]" />
-	<circle cx={x + 5} cy={y} r="4" class="animate-tog fill-brand motion-reduce:animate-none" style="animation-delay:{delay}s" />
 {/snippet}
 
 <section
